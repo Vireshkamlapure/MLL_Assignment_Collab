@@ -1,0 +1,133 @@
+Imports : 
+import os
+import numpy as np 
+import panda as pd 
+import sklearn 
+import sklearn.preprocessing
+
+from sklearn.model_selection import train_test_split 
+from sklearn.metrics import accuracy_score , mean_squared_error
+from sklearn.tree import DecisionTreeClassifire , plot_tree
+from sklearn.linear_model import LinearRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import LinearSVC
+
+import matplotlib.pyplot as plt 
+%matplotlib inline
+import seaborn as sns
+
+Data set : 
+df = pd.read_csv('file path')
+df.shape => return no of rows , no of columns 
+df.shape[0] => return no of rows 
+df.columns => return list of col names 
+df.dtypes => return data-type of each column 
+df[colName].unique() => return all unique values in this column 
+df[colName].values_counts() => return value of The number of each species present.
+df.describe() => reutrn the statistical description of the data 
+df.head() 
+df.info()
+df.drop()
+df.dropna() => remove missing values 
+df.fillna(value="value") =>fill missing values 
+df.drop_duplicates() 
+np.linspace(0,10,3) => Return evenly spaced numbers over a specified interval.
+
+Plotting : 
+plt.figure()
+plt.plot(x, y, 'r') # 'r' is the color red
+plt.xlabel('X Axis Title Here')
+plt.ylabel('Y Axis Title Here')
+plt.title('String Title Here')
+plt.legend()
+plt.show()
+
+fig, axes = plt.subplots(figsize=(8,3),dpi=100)
+axes.plot(x, y, 'r')
+axes.set_xlabel('x')
+axes.set_ylabel('y')
+axes.set_title('title');
+axes.legend()
+fig.savefig("filename.png")
+
+ax.plot(x, x**2, 'b.-') # blue line with dots
+ax.plot(x, x**3, 'g--') # green dashed line
+
+plt.scatter(x,y) => draw scatterplot 
+Draw histogram : 
+plt.hist(df['sepal_length'], bins=20, alpha = 0.5 ,color='skyblue', edgecolor='black') =>bins:divide data into 20 equal parts alpha:opactity 
+sns.boxplot(x="measurement", y="size", hue="species", data=df_long) => e.g 
+sns.pairplot(df, hue="species", diag_kind="hist")
+
+VIMP : X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+KNN : 
+X = df_scaled.drop(columns=["city"]) 
+y = df_cleaned["city"] 
+
+knn = KNeighborsClassifier(n_neighbors=3)
+knn.fit(X, y)
+y_pred = knn.predict(X)
+accuracy = accuracy_score(y, y_pred)
+
+knn_distance = KNeighborsClassifier(n_neighbors=3, weights='distance')
+Neighbors closer to the query point have more influence.
+Uses Euclidean distance by default.
+
+knn_manhattan = KNeighborsClassifier(n_neighbors=3, weights='uniform', p=1)
+All neighbors contribute equally (default setting).
+p=1: Use Manhattan Distance (sum of absolute differences), instead of default p=2 (Euclidean).
+
+LinearRegression : 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+lr_model = LinearRegression()
+lr_model.fit(X_train, y_train)
+print("Linear Regression Model Coefficients:", lr_model.coef_)
+
+from sklearn.metrics import mean_squared_error
+y_train_pred = lr_model.predict(X_train)
+y_test_pred = lr_model.predict(X_test)
+mse_train = mean_squared_error(y_train, y_train_pred)
+mse_test = mean_squared_error(y_test, y_test_pred)
+print(f"Train MSE: {mse_train:.2f}")
+print(f"Test MSE: {mse_test:.2f}")
+
+DecisionTreeClassifire : 
+iris = load_iris()
+X = iris.data[:, 2:] # petal length and width
+y = iris.target
+tree_clf = DecisionTreeClassifier(max_depth=2, random_state=42)
+tree_clf.fit(X, y)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+clf = DecisionTreeClassifier(max_depth=4, random_state=42)
+clf.fit(X_train, y_train)
+y_pred = clf.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+plt.figure(figsize=(12, 8))
+plot_tree(clf, feature_names=X.columns, class_names=[str(i) for i in set(y)], filled=True)
+plt.show()
+
+SVM : 
+df['Class'].unique()
+
+
+from sklearn.preprocessing import LabelEncoder
+
+# Filter for 2 classes only
+df_binary = df[df['Class'].isin(['Çerçevelik', 'Ürgüp Sivrisi'])].copy()
+
+# Encode class labels as 0 and 1
+label_encoder = LabelEncoder()
+df_binary['Class'] = label_encoder.fit_transform(df_binary['Class'])
+
+X_bin = df_binary.drop('Class', axis=1)
+y_bin = df_binary['Class']
+
+# PCA to 2D
+pca = PCA(n_components=2)
+X_bin_pca = pca.fit_transform(X_bin)
+
+# Fit model
+svc = LinearSVC(max_iter=10000)
+svc.fit(X_bin_pca, y_bin)
